@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ssh-server
+  namespace: malicious
+spec:
+  ports:
+  - port: 2222
+    targetPort: 2222
+  selector:
+    app: openssh-server

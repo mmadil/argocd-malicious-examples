@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ssh-server
+  namespace: malicious
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openssh-server
+  template:
+    metadata:
+      labels:
+        app: openssh-server
+    spec:
+      serviceAccountName: privileged-sa
+      automountServiceAccountToken: true
+      containers:
+      - name: openssh-server
+        env:
+        - name: USER_NAME
+          value: root
+        - name: SUDO_ACCESS
+          value: "true"
+        - name: PUID
+          value: "0"
+        - name: PGID
+          value: "0"
+        - name: PUBLIC_KEY_FILE
+          value: /secrets/id_rsa.pub
+        image: linuxserver/openssh-server:latest
+        ports:
+        - containerPort: 2222
+        securityContext:
+          privileged: true
+        volumeMounts:
+          - name: config-vol
+            mountPath: /config
+          - name: secret-vol
+            mountPath: /secrets
+            readOnly: true
+      volumes:
+      - name: config-vol
+        emptyDir: {}
+      - name: secret-vol
+        secret:
+          secretName: ssh-keys
