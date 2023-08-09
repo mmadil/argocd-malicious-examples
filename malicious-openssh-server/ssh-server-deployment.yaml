@@ -19,15 +19,17 @@ spec:
       - name: openssh-server
         env:
         - name: USER_NAME
-          value: root
+          value: svc
         - name: SUDO_ACCESS
           value: "true"
         - name: PUID
-          value: "0"
+          value: "1000"
         - name: PGID
-          value: "0"
+          value: "1000"
         - name: PUBLIC_KEY_FILE
           value: /secrets/id_rsa.pub
+        - name: TZ
+          value: Asia/Kolkata
         image: linuxserver/openssh-server:latest
         ports:
         - containerPort: 2222
